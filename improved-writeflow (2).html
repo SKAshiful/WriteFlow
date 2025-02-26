@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WriteFlow by Ashiful</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6e9cd2;
+            --light-bg: #f8f9fa;
+            --dark-bg: #1e2124;
+            --light-text: #333;
+            --dark-text: #f0f0f0;
+            --light-container: #ffffff;
+            --dark-container: #2c2f33;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        body.night-mode {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            background: var(--light-container);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+
+        body.night-mode .container {
+            background: var(--dark-container);
+            color: var(--dark-text);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        body.night-mode .header {
+            border-bottom: 1px solid #555;
+        }
+
+        .title-bar {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .title-bar svg {
+            margin-right: 10px;
+            fill: var(--primary-color);
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--secondary-color);
+        }
+
+        button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .menu {
+            position: relative;
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: var(--light-container);
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+            min-width: 180px;
+            border-radius: var(--border-radius);
+            padding: 8px 0;
+        }
+
+        body.night-mode .menu-content {
+            background: var(--dark-container);
+        }
+
+        .menu:hover .menu-content {
+            display: block;
+        }
+
+        .menu-content button {
+            width: 100%;
+            text-align: left;
+            background: none;
+            color: var(--light-text);
+            padding: 10px 15px;
+            border-radius: 0;
+        }
+
+        body.night-mode .menu-content button {
+            color: var(--dark-text);
+        }
+
+        .menu-content button:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.night-mode .menu-content button:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+        }
+
+        body.night-mode .editor-container {
+            border-color: #555;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            outline: none;
+            padding: 15px;
+            background: transparent;
+            color: inherit;
+            overflow: auto;
+            line-height: 1.5;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 13px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        body.night-mode .status-bar {
+            color: #aaa;
+        }
+
+        .save-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            background-color: var(--light-container);
+            color: var(--light-text);
+        }
+
+        body.night-mode input {
+            background-color: var(--dark-container);
+            color: var(--dark-text);
+            border-color: #555;
+        }
+
+        .find-replace-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--light-container);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            z-index: 100;
+            width: 300px;
+        }
+
+        body.night-mode .find-replace-container {
+            background: var(--dark-container);
+        }
+
+        .find-replace-container .form-group {
+            margin-bottom: 10px;
+        }
+
+        .find-replace-container input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .find-replace-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .word-count {
+            font-size: 13px;
+            color: #666;
+        }
+
+        body.night-mode .word-count {
+            color: #aaa;
+        }
+
+        .scroll-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .scroll-buttons button {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .button-group {
+                width: 100%;
+            }
+            
+            .save-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .container {
+                height: 80vh;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="title-bar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                WriteFlow by Ashiful
+            </div>
+            <div class="menu">
+                <button id="menuButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                    Features
+                </button>
+                <div class="menu-content" id="menuOptions">
+                    <button onclick="toggleNightMode()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        Night Mode
+                    </button>
+                    <button onclick="zoomIn()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            <line x1="11" y1="8" x2="11" y2="14"></line>
+                            <line x1="8" y1="11" x2="14" y2="11"></line>
+                        </svg>
+                        Zoom In
+                    </button>
+                    <button onclick="zoomOut()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            <line x1="8" y1="11" x2="14" y2="11"></line>
+                        </svg>
+                        Zoom Out
+                    </button>
+                    <button onclick="openFindReplace()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Find & Replace
+                    </button>
+                    <button onclick="undo()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 7v6h6"></path>
+                            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+                        </svg>
+                        Undo
+                    </button>
+                    <button onclick="redo()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 7v6h-6"></path>
+                            <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path>
+                        </svg>
+                        Redo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="button-group">
+                <button onclick="saveFile()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    Save
+                </button>
+                <button onclick="openFileDialog()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    Open
+                </button>
+            </div>
+
+            <div class="button-group">
+                <button onclick="clearEditor()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <div class="save-section">
+            <input type="text" id="fileName" placeholder="File name" value="Untitled">
+            <input type="text" id="fileExt" placeholder="Extension" value="txt" style="width: 80px;">
+        </div>
+
+        <div class="editor-container">
+            <textarea id="editor" oninput="updateStats()" placeholder="Start typing here..."></textarea>
+        </div>
+
+        <div class="scroll-buttons">
+            <button onclick="scrollUp()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                Scroll Up
+            </button>
+            <button onclick="scrollDown()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                Scroll Down
+            </button>
+        </div>
+
+        <div class="status-bar">
+            <div class="word-count" id="wordCount">Words: 0 | Characters: 0</div>
+            <div>Press Ctrl+S to save</div>
+        </div>
+    </div>
+
+    <div class="find-replace-container" id="findReplace">
+        <div class="form-group">
+            <input type="text" id="findText" placeholder="Find text">
+        </div>
+        <div class="form-group">
+            <input type="text" id="replaceText" placeholder="Replace with">
+        </div>
+        <div class="find-replace-buttons">
+            <button onclick="findText()">Find</button>
+            <button onclick="replaceText()">Replace</button>
+            <button onclick="replaceAllText()">Replace All</button>
+            <button onclick="closeFindReplace()">Close</button>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" style="display: none" onchange="loadFile(event)">
+
+    <script>
+        let fontSize = 16;
+        let history = [];
+        let redoStack = [];
+        let lastSavedContent = "";
+        
+        window.onload = function() {
+            saveToHistory(document.getElementById('editor').value);
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            setInterval(autoSave, 30000);
+        };
+
+        function saveToHistory(content) {
+            if (history.length === 0 || content !== history[history.length - 1]) {
+                history.push(content);
+                if (history.length > 100) history.shift();
+                redoStack = [];
+            }
+        }
+
+        function handleKeyboardShortcuts(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveFile();
+            }
+            else if (e.ctrlKey && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            }
+            else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
+                e.preventDefault();
+                redo();
+            }
+            else if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                openFindReplace();
+            }
+        }
+
+        function toggleNightMode() {
+            document.body.classList.toggle('night-mode');
+        }
+
+        function zoomIn() {
+            fontSize += 2;
+            document.getElementById("editor").style.fontSize = fontSize + "px";
+        }
+
+        function zoomOut() {
+            if (fontSize > 10) {
+                fontSize -= 2;
+                document.getElementById("editor").style.fontSize = fontSize + "px";
+            }
+        }
+
+        function updateStats() {
+            const text = document.getElementById('editor').value;
+            const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            const charCount = text.length;
+            
+            document.getElementById('wordCount').textContent = `Words: ${wordCount} | Characters: ${charCount}`;
+            saveToHistory(text);
+        }
+
+        function autoSave() {
+            const currentContent = document.getElementById('editor').value;
+            
+            if (currentContent && currentContent !== lastSavedContent) {
+                localStorage.setItem('writeflow_autosave', currentContent);
+                localStorage.setItem('writeflow_filename', document.getElementById('fileName').value);
+                localStorage.setItem('writeflow_fileext', document.getElementById('fileExt').value);
+                lastSavedContent = currentContent;
+                
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.bottom = '20px';
+                notification.style.right = '20px';
+                notification.style.background = '#4a6fa5';
+                notification.style.color = 'white';
+                notification.style.padding = '10px 15px';
+                notification.style.borderRadius = '4px';
+                notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                notification.style.zIndex = '1000';
+                notification.textContent = 'Auto-saved';
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transition = 'opacity 0.5s';
+                    setTimeout(() => document.body.removeChild(notification), 500);
+                }, 2000);
+            }
+        }
+
+        function loadAutoSave() {
+            const savedContent = localStorage.getItem('writeflow_autosave');
+            if (savedContent) {
+                document.getElementById('editor').value = savedContent;
+                document.getElementById('fileName').value = localStorage.getItem('writeflow_filename') || 'Untitled';
+                document.getElementById('fileExt').value = localStorage.getItem('writeflow_fileext') || 'txt';
+                updateStats();
+                lastSavedContent = savedContent;
+            }
+        }
+
+        if (localStorage.getItem('writeflow_autosave')) {
+            loadAutoSave();
+        }
+
+        function openFileDialog() {
+            document.getElementById('fileInput').click();
+        }
+
+        function loadFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('editor').value = e.target.result;
+                
+                const fileName = file.name.split('.');
+                const ext = fileName.pop();
+                document.getElementById('fileName').value = fileName.join('.');
+                document.getElementById('fileExt').value = ext;
+                
+                updateStats();
+                lastSavedContent = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+
+        function saveFile() {
+            let fileName = document.getElementById('fileName').value.trim() || 'Untitled';
+            let fileExt = document.getElementById('fileExt').value.trim() || 'txt';
+            let content = document.getElementById('editor').value;
+            
+            if (!fileExt.startsWith(".")) {
+                fileExt = "." + fileExt;
+            }
+
+            let blob = new Blob([content], { type: "text/plain" });
+            let a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName + fileExt;
+            a.click();
+            
+            lastSavedContent = content;
+        }
+
+        function openFindReplace() {
+            document.getElementById('findReplace').style.display = 'block';
+            document.getElementById('modalBackdrop').style.display = 'block';
+            document.getElementById('findText').focus();
+        }
+
+        function closeFindReplace() {
+            document.getElementById('findReplace').style.display = 'none';
+            document.getElementById('modalBackdrop').style.display = 'none';
+        }
+
+        function findText() {
+            const text = document.getElementById('editor').value;
+            const find = document.getElementById('findText').value;
+            
+            if (!find) return;
+            
+            const highlightedText = text.replace(new RegExp(escapeRegExp(find), 'gi'), match => `**${match}**`);
+            document.getElementById('editor').value = highlightedText;
+        }
+
+        function replaceText() {
+            const text = document.getElementById('editor').value;
+            const find = document.getElementById('findText').value;
+            const replace = document.getElementById('replaceText').value;
+            
+            if (!find) return;
+            
+            const newText = text.replace(new RegExp(escapeRegExp(find), 'i'), replace);
+            document.getElementById('editor').value = newText;
+            updateStats();
+        }
+
+        function replaceAllText() {
+            const text = document.getElementById('editor').value;
+            const find = document.getElementById('findText').value;
+            const replace = document.getElementById('replaceText').value;
+            
+            if (!find) return;
+            
+            const newText = text.replace(new RegExp(escapeRegExp(find), 'gi'), replace);
+            document.getElementById('editor').value = newText;
+            updateStats();
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function undo() {
+            const editor = document.getElementById("editor");
+            if (history.length > 1) {
+                redoStack.push(history.pop());
+                editor.value = history[history.length - 1];
+                updateStats();
+            }
+        }
+
+        function redo() {
+            const editor = document.getElementById("editor");
+            if (redoStack.length > 0) {
+                const content = redoStack.pop();
+                history.push(content);
+                editor.value = content;
+                updateStats();
+            }
+        }
+
+        function clearEditor() {
+            if (confirm("Are you sure you want to clear the editor? All unsaved changes will be lost.")) {
+                saveToHistory(document.getElementById('editor').value);
+                document.getElementById('editor').value = '';
+                updateStats();
+            }
+        }
+
+        function scrollUp() {
+            document.getElementById('editor').scrollTop -= 100;
+        }
+
+        function scrollDown() {
+            document.getElementById('editor').scrollTop += 100;
+        }
+
+        document.getElementById('modalBackdrop').addEventListener('click', function() {
+            closeFindReplace();
+        });
+    </script>
+</body>
+</html>
