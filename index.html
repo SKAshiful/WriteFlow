@@ -268,7 +268,6 @@
             z-index: 99;
         }
 
-        /* Word Count Display */
         .word-count {
             font-size: 13px;
             color: #666;
@@ -278,7 +277,6 @@
             color: #aaa;
         }
 
-        /* Scroll buttons */
         .scroll-buttons {
             display: flex;
             justify-content: space-between;
@@ -365,15 +363,6 @@
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                         Find & Replace
-                    </button>
-                    <button onclick="toggleFocusMode()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="8" y1="3" x2="16" y2="3"></line>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="3" y1="8" x2="3" y2="16"></line>
-                            <line x1="21" y1="8" x2="21" y2="16"></line>
-                        </svg>
-                        Focus Mode
                     </button>
                     <button onclick="undo()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -476,49 +465,35 @@
         let fontSize = 16;
         let history = [];
         let redoStack = [];
-        let focusModeActive = false;
         let lastSavedContent = "";
         
-        // Initialize by adding event listeners and setting up the editor
         window.onload = function() {
-            // Save the initial empty state
             saveToHistory(document.getElementById('editor').value);
-            
-            // Set up keyboard shortcuts
             document.addEventListener('keydown', handleKeyboardShortcuts);
-            
-            // Set up autosave
-            setInterval(autoSave, 30000);  // Autosave every 30 seconds
+            setInterval(autoSave, 30000);
         };
 
         function saveToHistory(content) {
-            // Don't save if the content is the same as the last entry
             if (history.length === 0 || content !== history[history.length - 1]) {
                 history.push(content);
-                // Limit history size to prevent memory issues
                 if (history.length > 100) history.shift();
-                // Clear redo stack when new changes are made
                 redoStack = [];
             }
         }
 
         function handleKeyboardShortcuts(e) {
-            // Save with Ctrl+S
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
                 saveFile();
             }
-            // Undo with Ctrl+Z
             else if (e.ctrlKey && e.key === 'z') {
                 e.preventDefault();
                 undo();
             }
-            // Redo with Ctrl+Y or Ctrl+Shift+Z
             else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
                 e.preventDefault();
                 redo();
             }
-            // Find with Ctrl+F
             else if (e.ctrlKey && e.key === 'f') {
                 e.preventDefault();
                 openFindReplace();
@@ -527,31 +502,6 @@
 
         function toggleNightMode() {
             document.body.classList.toggle('night-mode');
-        }
-
-        function toggleFocusMode() {
-            const container = document.querySelector('.container');
-            
-            if (!focusModeActive) {
-                // Enable focus mode
-                container.classList.add('focus-mode');
-                document.querySelectorAll('.toolbar, .save-section, .status-bar, .header, .scroll-buttons').forEach(el => {
-                    el.style.display = 'none';
-                });
-                document.querySelector('.editor-container').style.height = '100%';
-                document.querySelector('textarea').style.padding = '30px';
-            } else {
-                // Disable focus mode
-                container.classList.remove('focus-mode');
-                document.querySelectorAll('.toolbar, .save-section, .status-bar, .header').forEach(el => {
-                    el.style.display = '';
-                });
-                document.querySelector('.scroll-buttons').style.display = 'flex';
-                document.querySelector('.editor-container').style.height = '';
-                document.querySelector('textarea').style.padding = '15px';
-            }
-            
-            focusModeActive = !focusModeActive;
         }
 
         function zoomIn() {
@@ -572,22 +522,18 @@
             const charCount = text.length;
             
             document.getElementById('wordCount').textContent = `Words: ${wordCount} | Characters: ${charCount}`;
-            
-            // Save state to history
             saveToHistory(text);
         }
 
         function autoSave() {
             const currentContent = document.getElementById('editor').value;
             
-            // Only save if there's content and it's different from last save
             if (currentContent && currentContent !== lastSavedContent) {
                 localStorage.setItem('writeflow_autosave', currentContent);
                 localStorage.setItem('writeflow_filename', document.getElementById('fileName').value);
                 localStorage.setItem('writeflow_fileext', document.getElementById('fileExt').value);
                 lastSavedContent = currentContent;
                 
-                // Show a brief notification
                 const notification = document.createElement('div');
                 notification.style.position = 'fixed';
                 notification.style.bottom = '20px';
@@ -611,156 +557,4 @@
         }
 
         function loadAutoSave() {
-            const savedContent = localStorage.getItem('writeflow_autosave');
-            if (savedContent) {
-                document.getElementById('editor').value = savedContent;
-                document.getElementById('fileName').value = localStorage.getItem('writeflow_filename') || 'Untitled';
-                document.getElementById('fileExt').value = localStorage.getItem('writeflow_fileext') || 'txt';
-                updateStats();
-                lastSavedContent = savedContent;
-            }
-        }
-
-        // Check for autosaved content on load
-        if (localStorage.getItem('writeflow_autosave')) {
-            loadAutoSave();
-        }
-
-        function openFileDialog() {
-            document.getElementById('fileInput').click();
-        }
-
-        function loadFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('editor').value = e.target.result;
-                
-                // Set the filename
-                const fileName = file.name.split('.');
-                const ext = fileName.pop();
-                document.getElementById('fileName').value = fileName.join('.');
-                document.getElementById('fileExt').value = ext;
-                
-                // Update stats
-                updateStats();
-                lastSavedContent = e.target.result;
-            };
-            reader.readAsText(file);
-        }
-
-        function saveFile() {
-            let fileName = document.getElementById('fileName').value.trim() || 'Untitled';
-            let fileExt = document.getElementById('fileExt').value.trim() || 'txt';
-            let content = document.getElementById('editor').value;
-            
-            if (!fileExt.startsWith(".")) {
-                fileExt = "." + fileExt;
-            }
-
-            let blob = new Blob([content], { type: "text/plain" });
-            let a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = fileName + fileExt;
-            a.click();
-            
-            lastSavedContent = content;
-        }
-
-        function openFindReplace() {
-            document.getElementById('findReplace').style.display = 'block';
-            document.getElementById('modalBackdrop').style.display = 'block';
-            document.getElementById('findText').focus();
-        }
-
-        function closeFindReplace() {
-            document.getElementById('findReplace').style.display = 'none';
-            document.getElementById('modalBackdrop').style.display = 'none';
-        }
-
-        function findText() {
-            const text = document.getElementById('editor').value;
-            const find = document.getElementById('findText').value;
-            
-            if (!find) return;
-            
-            // Highlight all occurrences
-            const highlightedText = text.replace(new RegExp(escapeRegExp(find), 'gi'), match => `**${match}**`);
-            document.getElementById('editor').value = highlightedText;
-        }
-
-        function replaceText() {
-            const text = document.getElementById('editor').value;
-            const find = document.getElementById('findText').value;
-            const replace = document.getElementById('replaceText').value;
-            
-            if (!find) return;
-            
-            // Replace first occurrence
-            const newText = text.replace(new RegExp(escapeRegExp(find), 'i'), replace);
-            document.getElementById('editor').value = newText;
-            updateStats();
-        }
-
-        function replaceAllText() {
-            const text = document.getElementById('editor').value;
-            const find = document.getElementById('findText').value;
-            const replace = document.getElementById('replaceText').value;
-            
-            if (!find) return;
-            
-            // Replace all occurrences
-            const newText = text.replace(new RegExp(escapeRegExp(find), 'gi'), replace);
-            document.getElementById('editor').value = newText;
-            updateStats();
-        }
-
-        function escapeRegExp(string) {
-            // Escape special regex characters
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-
-        function undo() {
-            const editor = document.getElementById("editor");
-            if (history.length > 1) {
-                redoStack.push(history.pop());
-                editor.value = history[history.length - 1];
-                updateStats();
-            }
-        }
-
-        function redo() {
-            const editor = document.getElementById("editor");
-            if (redoStack.length > 0) {
-                const content = redoStack.pop();
-                history.push(content);
-                editor.value = content;
-                updateStats();
-            }
-        }
-
-        function clearEditor() {
-            if (confirm("Are you sure you want to clear the editor? All unsaved changes will be lost.")) {
-                saveToHistory(document.getElementById('editor').value);
-                document.getElementById('editor').value = '';
-                updateStats();
-            }
-        }
-
-        function scrollUp() {
-            document.getElementById('editor').scrollTop -= 100;
-        }
-
-        function scrollDown() {
-            document.getElementById('editor').scrollTop += 100;
-        }
-
-        // Close modal backdrop when clicking on it
-        document.getElementById('modalBackdrop').addEventListener('click', function() {
-            closeFindReplace();
-        });
-    </script>
-</body>
-</html>
+            const savedContent = localStorage.getItem('writeflow_
