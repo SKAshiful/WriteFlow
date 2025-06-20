@@ -585,49 +585,6 @@
 
 
 
-<script>
-  let deferredPrompt;
-  const addBtn = document.createElement("div");
-  addBtn.style.position = "fixed";
-  addBtn.style.bottom = "20px";
-  addBtn.style.left = "50%";
-  addBtn.style.transform = "translateX(-50%)";
-  addBtn.style.backgroundColor = "#333";
-  addBtn.style.color = "#fff";
-  addBtn.style.padding = "10px 20px";
-  addBtn.style.borderRadius = "10px";
-  addBtn.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
-  addBtn.style.fontSize = "16px";
-  addBtn.style.cursor = "pointer";
-  addBtn.style.display = "none";
-  addBtn.innerText = "Add to Home Screen";
-
-  document.body.appendChild(addBtn);
-
-  window.addEventListener("beforeinstallprompt", (e) => {
-    // Prevent the default mini-infobar
-    e.preventDefault();
-    deferredPrompt = e;
-
-    // Show custom button
-    addBtn.style.display = "block";
-
-    addBtn.addEventListener("click", () => {
-      // Show the default install prompt
-      deferredPrompt.prompt();
-      // Wait for the user's response
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === "accepted") {
-          console.log("User accepted the A2HS prompt");
-        } else {
-          console.log("User dismissed the A2HS prompt");
-        }
-        deferredPrompt = null;
-        addBtn.style.display = "none";
-      });
-    });
-  });
-  </script>
 
 
 </body>
