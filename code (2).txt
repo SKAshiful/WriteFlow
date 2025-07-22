@@ -1,0 +1,35 @@
+{
+    "html": [
+        { "label": "<!DOCTYPE html>", "insert": "<!DOCTYPE html>" },
+        { "label": "<html></html>", "insert": "<html>\n\t\n</html>" },
+        { "label": "<head></head>", "insert": "<head>\n\t<title></title>\n</head>" },
+        { "label": "<body></body>", "insert": "<body>\n\t\n</body>" },
+        { "label": "<h1></h1>", "insert": "<h1></h1>" },
+        { "label": "<p></p>", "insert": "<p></p>" }
+    ],
+    "js": [
+        { "label": "console.log()", "insert": "console.log();" },
+        { "label": "const", "insert": "const " },
+        { "label": "let", "insert": "let " },
+        { "label": "function", "insert": "function " },
+        { "label": "document.getElementById()", "insert": "document.getElementById('');" },
+        { "label": "addEventListener()", "insert": "addEventListener('', () => {\n\t\n});" }
+    ],
+    "css": [
+        { "label": "color: ;", "insert": "color: " },
+        { "label": "background-color: ;", "insert": "background-color: " },
+        { "label": "font-size: ;", "insert": "font-size: " },
+        { "label": "margin: ;", "insert": "margin: " },
+        { "label": "padding: ;", "insert": "padding: " }
+    ],
+    "py": [
+        { "label": "print()", "insert": "print()" },
+        { "label": "def function_name():", "insert": "def function_name():\n    pass" },
+        { "label": "if __name__ == \"__main__\":", "insert": "if __name__ == \"__main__\":\n    " },
+        { "label": "import", "insert": "import " },
+        { "label": "from module import", "insert": "from  import " },
+        { "label": "for i in range():", "insert": "for i in range():\n    " },
+        { "label": "class ClassName:", "insert": "class ClassName:\n    def __init__(self):\n        pass" },
+        { "label": "try...except", "insert": "try:\n    \nexcept Exception as e:\n    print(e)" }
+    ]
+}
